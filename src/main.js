@@ -5,6 +5,7 @@ import App from './App';
 import router from './router';
 import firebase from 'firebase/app';
 import store from './store';
+import auth from 'firebase/auth';
 
 Vue.config.productionTip = false;
 
@@ -22,11 +23,21 @@ firebase.initializeApp(config);
 // making available on window object so we don't need to import on each component
 window.firebase = firebase;
 
-/* eslint-disable no-new */
-new Vue({
-  el: '#app',
-  router,
-  store,
-  components: { App },
-  template: '<App/>'
+// keep user logged in through firebase auth
+const unsubscribe = firebase.auth().onAuthStateChanged(user => {
+  // dispatch user
+  store.dispatch('setUser', user);
+
+  // executing Vue instance here
+  new Vue({
+    el: '#app',
+    router,
+    store,
+    components: { App },
+    template: '<App/>'
+  });
+
+  // Each time auth state changes from log in to log out new Vue instance executes and this entire method executes itself
+  // recursion - this function calls itself on auth state changes
+  unsubscribe();
 });
