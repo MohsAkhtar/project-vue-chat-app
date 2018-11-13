@@ -27,7 +27,18 @@ export default {
 
   methods: {
     loginWithGoogle() {
-      firebase.auth().signInWithPopup(new firebase.auth.GoogleAuthProvider());
+      firebase
+        .auth()
+        .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+        .then(response => {
+          // console.log(response.user);
+
+          // dispatch setUser action
+          this.$store.dispatch('setUser', response.user);
+
+          //then redirect user to '/' page
+          this.$router.push('/');
+        });
     }
   }
 };
