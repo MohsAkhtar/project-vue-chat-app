@@ -5,7 +5,6 @@ Vue.use(Vuex);
 
 // create a state that holds data
 const state = {
-  // test data
   currentUser: null
 };
 
@@ -18,8 +17,8 @@ const mutations = {
 
 // create actions for mutations with necessary data
 const actions = {
-  setUser({ commit }, user) {
-    commit('SET_USER', user);
+  setUser(state, user) {
+    state.commit('SET_USER', user);
   }
 };
 

@@ -58,7 +58,8 @@ export default {
         .auth()
         .signInWithPopup(new firebase.auth.GoogleAuthProvider())
         .then(response => {
-          // console.log(response.user);
+          console.log('google worked');
+          console.log(response.user);
 
           // dispatch setUser action
           this.$store.dispatch('setUser', response.user);
@@ -84,7 +85,7 @@ export default {
         .auth()
         .signInWithPopup(new firebase.auth.TwitterAuthProvider())
         .then(response => {
-          // console.log(response.user);
+          console.log('twitter worked');
 
           // dispatch setUser action
           this.$store.dispatch('setUser', response.user);

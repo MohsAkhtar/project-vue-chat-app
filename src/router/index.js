@@ -14,10 +14,12 @@ export default new Router({
       name: 'chat',
       component: Chat,
       beforeEnter: (to, from, next) => {
-        if (!firebase.auth.current) {
+        if (!firebase.auth().currentUser) {
           next('/login');
+          console.log('log in');
         } else {
           next();
+          console.log('worked');
         }
       }
     },
