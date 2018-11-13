@@ -16,10 +16,8 @@ export default new Router({
       beforeEnter: (to, from, next) => {
         if (!firebase.auth().currentUser) {
           next('/login');
-          console.log('log in');
         } else {
           next();
-          console.log('worked');
         }
       }
     },

@@ -29,13 +29,15 @@
 
 <script>
 import auth from 'firebase/auth';
+import database from 'firebase/database';
 export default {
   name: 'login',
 
   data() {
     return {
       errors: [],
-      loading: false
+      loading: false,
+      usersRef: firebase.database().ref('users')
     };
   },
 
@@ -58,8 +60,8 @@ export default {
         .auth()
         .signInWithPopup(new firebase.auth.GoogleAuthProvider())
         .then(response => {
-          console.log('google worked');
-          console.log(response.user);
+          // pass user to save in db
+          this.saveUserToUsersRef(response.user);
 
           // dispatch setUser action
           this.$store.dispatch('setUser', response.user);
@@ -75,6 +77,14 @@ export default {
         });
     },
 
+    // save user to databse
+    saveUserToUsersRef(user) {
+      return this.usersRef.child(user.uid).set({
+        name: user.displayName,
+        avatar: user.photoURL
+      });
+    },
+
     loginWithTwitter() {
       // loading set to true
       this.loading = true;
@@ -85,8 +95,6 @@ export default {
         .auth()
         .signInWithPopup(new firebase.auth.TwitterAuthProvider())
         .then(response => {
-          console.log('twitter worked');
-
           // dispatch setUser action
           this.$store.dispatch('setUser', response.user);
 
