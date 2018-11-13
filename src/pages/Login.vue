@@ -19,7 +19,7 @@
     </div>
     <div class="row">
       <div class="col text-center mt-5">
-        <button class="btn btn-outline-info btn-lg">Login With Twitter</button>
+        <button @click="loginWithTwitter" class="btn btn-outline-info btn-lg">Login With Twitter</button>
       </div>
     </div>
   </div>
@@ -57,6 +57,32 @@ export default {
       firebase
         .auth()
         .signInWithPopup(new firebase.auth.GoogleAuthProvider())
+        .then(response => {
+          // console.log(response.user);
+
+          // dispatch setUser action
+          this.$store.dispatch('setUser', response.user);
+
+          //then redirect user to '/' page
+          this.$router.push('/');
+        })
+        .catch(error => {
+          this.errors.push(error.message);
+
+          // set loading to false
+          this.loading = false;
+        });
+    },
+
+    loginWithTwitter() {
+      // loading set to true
+      this.loading = true;
+      // clear old errors
+      this.errors = [];
+
+      firebase
+        .auth()
+        .signInWithPopup(new firebase.auth.TwitterAuthProvider())
         .then(response => {
           // console.log(response.user);
 
