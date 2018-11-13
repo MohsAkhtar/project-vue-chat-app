@@ -4,6 +4,13 @@
       <h2 class="lead display-3">#VUE CHAT</h2>
       <p> Realtime communication at it's best</p>
     </div>
+
+    <div class="alert alert-info text-center" v-if="loading">Processing</div>
+
+    <div class="alert alert-danger text-center" v-if="hasErrors">
+      <div v-for="error in errors">{{ error }}</div>
+    </div>
+
     <div class="container-fluid">
     <div class="row">
       <div class="col text-center">
@@ -25,8 +32,28 @@ import auth from 'firebase/auth';
 export default {
   name: 'login',
 
+  data() {
+    return {
+      errors: [],
+      loading: false
+    };
+  },
+
+  // computed properties can be used like regular properties
+  // they can do computations behind the scenes
+  computed: {
+    hasErrors() {
+      return this.errors.length > 0;
+    }
+  },
+
   methods: {
     loginWithGoogle() {
+      // loading set to true
+      this.loading = true;
+      // clear old errors
+      this.errors = [];
+
       firebase
         .auth()
         .signInWithPopup(new firebase.auth.GoogleAuthProvider())
@@ -38,6 +65,12 @@ export default {
 
           //then redirect user to '/' page
           this.$router.push('/');
+        })
+        .catch(error => {
+          this.errors.push(error.message);
+
+          // set loading to false
+          this.loading = false;
         });
     }
   }
