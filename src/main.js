@@ -3,7 +3,7 @@
 import Vue from 'vue';
 import App from './App';
 import router from './router';
-import firebase from 'firebase';
+import firebase from 'firebase/app';
 
 Vue.config.productionTip = false;
 
@@ -17,6 +17,9 @@ var config = {
   messagingSenderId: '26662371447'
 };
 firebase.initializeApp(config);
+
+// making available on window object so we don't need to import on each component
+window.firebase = firebase;
 
 /* eslint-disable no-new */
 new Vue({
