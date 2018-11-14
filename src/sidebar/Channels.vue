@@ -2,6 +2,13 @@
   <div>
     <button @click="openModal" class="btn btn-outline-primary">Add Channel</button>
 
+    <!-- Show List of all Channels -->
+    <div class="mt-4">
+      <button v-for="channel in channels" class="list-group-item list-group-item-action">
+        {{ channel.name }}
+      </button>
+    </div>
+
     <!-- Modal -->
     <div class="modal fade" id="channelModal">
       <div class="modal-dialog modal-dialog-centered" role="document">
@@ -50,7 +57,8 @@ export default {
     return {
       new_channel: '',
       errors: [],
-      channelsRef: firebase.database().ref('channels')
+      channelsRef: firebase.database().ref('channels'),
+      channels: []
     };
   },
 
@@ -69,6 +77,7 @@ export default {
 
     // add a channel
     addChannel() {
+      this.errors = [];
       // get key to the newly created channel
       let key = this.channelsRef.push().key;
       console.log('newly created channel key: ', key);
@@ -87,7 +96,29 @@ export default {
         .catch(error => {
           this.errors.push(error.message);
         });
+    },
+
+    addListeners() {
+      //'child_added' event is used to retrieve a list of items from db
+      // it is triggered once for each existing child and then again every time a new child is added to specific path
+      this.channelsRef.on('child_added', snapshot => {
+        //console.log('listening channelsRef on child_added: ', snapshot.val());
+        this.channels.push(snapshot.val());
+      });
+    },
+
+    detachListeners() {
+      // turn off listening on component destroy
+      this.channelsRef.off();
     }
+  },
+
+  mounted() {
+    this.addListeners();
+  },
+
+  beforeDestroy() {
+    this.detachListeners();
   }
 };
 </script>
