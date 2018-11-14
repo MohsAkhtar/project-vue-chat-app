@@ -1,6 +1,6 @@
 <template>
   <div>
-    <!--Show Single Message -->
+<!--Show Single Message -->
     <single-message></single-message>
 
     <!-- Show Message Form -->
@@ -12,7 +12,7 @@
 import SingleMessage from './SingleMessage';
 import MessageForm from './MessageForm';
 export default {
-  name: 'message-form',
+  name: 'messages',
 
   components: { SingleMessage, MessageForm }
 };

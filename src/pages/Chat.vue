@@ -7,7 +7,7 @@
         </div>
 
         <div class="col-md-8 content">
-            <messages></messages>
+          <messages></messages>
         </div>
       </div>
     </div>
