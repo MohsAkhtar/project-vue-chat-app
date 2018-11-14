@@ -9,7 +9,7 @@
             <h6 class="mt-0">
               <a href="#">{{ message.user.name }}</a> - {{ message.timestamp | fromNow }}
             </h6>
-            <p>{{ message.content }} </p>
+            <p :class="{'self_message': selfMessage(message.user)}">{{ message.content }} </p>
           </div>
         </div>
       </div>
@@ -29,6 +29,13 @@ export default {
     ...mapGetters(['currentUser'])
   },
 
+  methods: {
+    // check to see if message was sent by user
+    selfMessage(user) {
+      return user.id === this.currentUser.uid;
+    }
+  },
+
   // moment package is used to format date
   filters: {
     fromNow(value) {
@@ -37,3 +44,10 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.self_message {
+  border-left: 5px solid red;
+  padding: 0 10px;
+}
+</style>
