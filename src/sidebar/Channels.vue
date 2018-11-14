@@ -35,7 +35,7 @@
 
             <!-- errors -->
             <ul class="list-group" v-if="hasErrors">
-              <li class="list-group-item text-danger" v-for="error in errors">
+              <li class="list-group-item text-danger" v-for="error in errors" :key="error.id">
                 {{ error }}
               </li>
             </ul>
