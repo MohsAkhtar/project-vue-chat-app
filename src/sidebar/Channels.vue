@@ -4,7 +4,11 @@
 
     <!-- Show List of all Channels -->
     <div class="mt-4">
-      <button v-for="channel in channels" class="list-group-item list-group-item-action">
+      <button v-for="channel in channels"
+      class="list-group-item list-group-item-action"
+      type="button"
+      :class="{'active': setActiveChannel(channel)}"
+      @click="changeChannel(channel)">
         {{ channel.name }}
       </button>
     </div>
@@ -49,6 +53,7 @@
 
 <script>
 import database from 'firebase/database';
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'channels',
@@ -64,6 +69,8 @@ export default {
   },
 
   computed: {
+    ...mapGetters(['currentChannel']),
+
     hasErrors() {
       return this.errors.length > 0;
     }
@@ -114,6 +121,16 @@ export default {
           this.$store.dispatch('setChannel', this.channel);
         }
       });
+    },
+
+    // method to differentiate which channels are active
+    setActiveChannel(channel) {
+      return channel.id === this.currentChannel.id;
+    },
+
+    // change channel (used on click)
+    changeChannel(channel) {
+      this.$store.dispatch('setChannel', channel);
     },
 
     detachListeners() {
