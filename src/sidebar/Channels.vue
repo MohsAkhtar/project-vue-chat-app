@@ -5,6 +5,7 @@
     <!-- Show List of all Channels -->
     <div class="mt-4">
       <button v-for="channel in channels"
+      :key="channel.id"
       class="list-group-item list-group-item-action"
       type="button"
       :class="{'active': setActiveChannel(channel)}"

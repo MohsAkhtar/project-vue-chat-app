@@ -8,7 +8,7 @@
     <div class="alert alert-info text-center" v-if="loading">Processing</div>
 
     <div class="alert alert-danger text-center" v-if="hasErrors">
-      <div v-for="error in errors">{{ error }}</div>
+      <div v-for="error in errors" :key="error.id">{{ error }}</div>
     </div>
 
     <div class="container-fluid">
