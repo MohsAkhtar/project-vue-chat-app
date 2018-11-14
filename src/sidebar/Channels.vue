@@ -58,7 +58,8 @@ export default {
       new_channel: '',
       errors: [],
       channelsRef: firebase.database().ref('channels'),
-      channels: []
+      channels: [],
+      channel: null
     };
   },
 
@@ -104,6 +105,14 @@ export default {
       this.channelsRef.on('child_added', snapshot => {
         //console.log('listening channelsRef on child_added: ', snapshot.val());
         this.channels.push(snapshot.val());
+
+        // set current channel
+        if (this.channels.length > 0) {
+          // set first channel in array to current channel
+          this.channel = this.channels[0];
+          // dispatch current channel to Vuex store
+          this.$store.dispatch('setChannel', this.channel);
+        }
       });
     },
 
