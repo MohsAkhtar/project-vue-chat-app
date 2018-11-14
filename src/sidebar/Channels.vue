@@ -17,14 +17,21 @@
           <div class="modal-body">
             <form>
               <div class="form-group">
-                <input type="text" id="new_channel" name="new_channel" placeholder="Channel Name" class="form-control">
+                <input v-model="new_channel" type="text" id="new_channel" name="new_channel" placeholder="Channel Name" class="form-control">
               </div>
             </form>
+
+            <!-- errors -->
+            <ul class="list-group" v-if="hasErrors">
+              <li class="list-group-item text-danger" v-for="error in errors">
+                {{ error }}
+              </li>
+            </ul>
           </div>
 
           <div class="modal-footer">
             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-            <button type="button" class="btn btn-primary">Add Channel</button>
+            <button @click="addChannel" type="button" class="btn btn-primary">Add Channel</button>
           </div>
         </div>
 
@@ -34,14 +41,52 @@
 </template>
 
 <script>
+import database from 'firebase/database';
+
 export default {
   name: 'channels',
+
+  data() {
+    return {
+      new_channel: '',
+      errors: [],
+      channelsRef: firebase.database().ref('channels')
+    };
+  },
+
+  computed: {
+    hasErrors() {
+      return this.errors.length > 0;
+    }
+  },
 
   methods: {
     openModal() {
       $('#channelModal')
         .appendTo('body')
         .modal('show');
+    },
+
+    // add a channel
+    addChannel() {
+      // get key to the newly created channel
+      let key = this.channelsRef.push().key;
+      console.log('newly created channel key: ', key);
+      //minimum info needed to create a new channel
+      let newChannel = { id: key, name: this.new_channel };
+      // create new channel in fb database
+      this.channelsRef
+        .child(key)
+        .update(newChannel)
+        .then(() => {
+          // reset new_channel value after it is created
+          this.new_channel = '';
+          // and hide modal
+          $('#channelModal').modal('hide');
+        })
+        .catch(error => {
+          this.errors.push(error.message);
+        });
     }
   }
 };
