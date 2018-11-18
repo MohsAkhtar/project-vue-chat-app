@@ -34,7 +34,7 @@ export default {
   watch: {
     // watching here so messages are updated asynchronously
     currentChannel: function() {
-      // if current channel changes, watch for its messages
+      // if current channel changes, watch for all messages
       this.messages = [];
       this.addListeners();
       this.channel = this.currentChannel;
