@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="mt-3">
+    <div class="mt-3 mb-5">
       <div v-for="message in messages" :key="message.id">
         <div class="media">
           <img :src="message.user.avatar" height="50" alt="" class="align-self-start mr-3">

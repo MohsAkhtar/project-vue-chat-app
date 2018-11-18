@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="messageForm">
-      <form>
+      <form @submit.prevent="sendMessage">
         <div class="input-group mb-3">
           <input v-model.trim="message" type="message" id="message" placeholder="Write something" class="form-control mt-3" autofocus>
 
@@ -58,7 +58,12 @@ export default {
             .child(this.currentChannel.id)
             .push()
             .set(newMessage)
-            .then(() => {})
+            .then(() => {
+              // next tick  used to autoscroll with message updates here
+              this.$nextTick(() => {
+                $('html, body').scrollTop($(document).height());
+              });
+            })
             .catch(error => {
               this.errors.push(error.message);
             });
