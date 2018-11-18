@@ -5,7 +5,7 @@
       <li v-for="user in users" :key="user.uid">
         <span>
           <img class="img rounded-circle" :src="user.avatar" height="20" />
-          <span class="text-primary">{{ user.name }} </span>
+          <span :class="{'text-primary': isOnline(user), 'text-danger': !isOnline(user)}">{{ user.name }} </span>
         </span>
       </li>
     </ul>
@@ -22,7 +22,11 @@ export default {
   data() {
     return {
       users: [],
-      usersRef: firebase.database().ref('users')
+      usersRef: firebase.database().ref('users'),
+      // using connectedRef to see if user is online or not, (the connected path returns a key if a user is logged in or not)
+      connectedRef: firebase.database().ref('.info/connected'),
+      // for each connected user presenceRef will reurn true
+      presenceRef: firebase.database().ref('presence')
     };
   },
 
@@ -43,9 +47,57 @@ export default {
           this.users.push(user);
         }
       });
+
+      // presenceRef child_added
+      this.presenceRef.on('child_added', snapshot => {
+        if (this.currentUser.uid !== snapshot.key) {
+          // pass to user status method
+          this.addStatusToUser(snapshot.key);
+        }
+      });
+
+      // presenceRef child_removed
+      this.presenceRef.on('child_removed', snapshot => {
+        if (this.currentUser.uid !== snapshot.key) {
+          // pass to user status method
+          this.addStatusToUser(snapshot.key, false);
+        }
+      });
+
+      // returns 'connected' to every user connected to our application
+      this.connectedRef.on('value', snapshot => {
+        //console.log('connected user: ', snapshot);
+        if (snapshot.val() === true) {
+          // each user online//connected will create a child node with users uid
+          let ref = this.presenceRef.child(this.currentUser.uid);
+          // we set this ref with the val true
+          ref.set(true);
+          // remove what we just set on disconnect
+          ref.onDisconnect().remove();
+        }
+      });
     },
 
-    detachListeners() {}
+    // add status to user online/offline
+    addStatusToUser(userId, connected = true) {
+      let index = this.users.findIndex(user => user.uid === userId);
+      if (index !== -1) {
+        connected === true
+          ? (this.users[index].status = 'online')
+          : (this.users[index].status = 'offline');
+      }
+    },
+
+    // is user online or offline
+    isOnline(user) {
+      return user.status == 'online';
+    },
+
+    detachListeners() {
+      this.usersRef.off();
+      this.presenceRef.off();
+      this.connectedRef.off();
+    }
   },
 
   mounted() {

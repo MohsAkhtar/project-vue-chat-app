@@ -20,6 +20,7 @@
 
 <script>
 import auth from 'firebase/auth';
+import database from 'firebase/database';
 import { mapGetters } from 'vuex';
 import Channels from './Channels';
 import Users from './Users';
@@ -29,12 +30,20 @@ export default {
 
   components: { Channels, Users },
 
+  data() {
+    return {
+      // to remove from sidebar when user logs off including this here
+      presenceRef: firebase.database().ref('presence')
+    };
+  },
+
   computed: {
     ...mapGetters(['currentUser'])
   },
 
   methods: {
     logout() {
+      this.presenceRef.child(this.currentUser.uid).remove(); // remove presence on log out
       firebase.auth().signOut();
       this.$store.dispatch('setUser', null);
       this.$router.push('/login');
